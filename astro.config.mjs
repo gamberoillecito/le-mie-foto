@@ -2,7 +2,8 @@ import sitemap from "@astrojs/sitemap";
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
-  site: "https://mysite.com",
+  site: "https://gamberoillecito.github.io",
+  base: "/le-mie-foto",
   devToolbar: {
     enabled: false,
   },
