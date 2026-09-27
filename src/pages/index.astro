@@ -22,6 +22,7 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
             href={imageData.src}
             target="_blank"
             data-fancybox="gallery"
+            // data-caption={_path}
           >
             <Image
               format="webp"
@@ -30,7 +31,9 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
               height={400}
               loading={index < 20 ? "eager" : "lazy"}
             />
+            
           </a>
+          
         );
       })
     }
@@ -54,12 +57,13 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
         display: {
           left: [],
           middle: [],
-          right: ["toggle-full"],
+          right: ["fullscreen"],
         },
       },
-      transition: "slide",
+      transition: "fade",
       Zoomable: {
         Panzoom: {
+          panMode: "mousemove",
           protected: true,
         },
     },

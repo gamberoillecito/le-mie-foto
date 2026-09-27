@@ -9,6 +9,6 @@
 }
 
 body {
-  background-color: light-dark(var(--bg), var(--bg-dark));
+  background-color: var(--bg);
   font-family: var(--font);
 }
