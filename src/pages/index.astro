@@ -9,12 +9,12 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
 ---
 
 <BaseLayout
-  title="Astro Photo Grid"
-  description="A minimal, single-page photo gallery for Astro."
+  title="Le Mie Foto"
+  description="A minimal, single-page photo gallery."
 >
   <section class="justified-gallery" id="photoswipe">
     {
-      Object.entries(images).map(async ([_path, image], index) => {
+      Object.entries(images).reverse().map(async ([_path, image], index) => {
         const { default: imageData } = await image();
         return (
           <a
@@ -41,7 +41,7 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
   import { Fancybox } from "@fancyapps/ui/dist/fancybox/";
 
   Fancybox.bind("[data-fancybox]", {
-    theme: "auto",
+    theme: "light",
     mainStyle: {
       "--f-button-width": "44px",
       "--f-button-height": "44px",
@@ -54,10 +54,17 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
         display: {
           left: [],
           middle: [],
-          right: ["close"],
+          right: ["toggle-full"],
         },
       },
       transition: "slide",
+      Zoomable: {
+      Panzoom: {
+        clickAction: "iterateZoom",
+        maxScale: 2,
+        protected: true,
+      },
+    },
     },
   });
 </script>
