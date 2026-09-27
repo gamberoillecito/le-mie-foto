@@ -59,11 +59,9 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
       },
       transition: "slide",
       Zoomable: {
-      Panzoom: {
-        clickAction: "iterateZoom",
-        maxScale: 2,
-        protected: true,
-      },
+        Panzoom: {
+          protected: true,
+        },
     },
     },
   });
