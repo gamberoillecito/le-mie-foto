@@ -27,7 +27,8 @@ const pageTitle = Astro.url.pathname === "/" ? title : `${title} · ${siteName}`
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <link rel="canonical" href={canonicalURL} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/public/favicon.svg" />
+    <link rel="manifest" href="/public/manifest.json" />
     <title set:html={smartypants(pageTitle, 1)} />
     <meta name="description" content={smartypants(description, 1)} />
     <meta property="og:title" content={smartypants(title, 1)} />

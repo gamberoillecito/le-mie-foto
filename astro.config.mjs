@@ -5,7 +5,7 @@ import { defineConfig } from "astro/config";
 export default defineConfig({
   site: "https://gamberoillecito.github.io",
   base: "/le-mie-foto",
-  integrations: [AstroPWA()],
+  integrations: [],
   devToolbar: {
     enabled: false,
   },
