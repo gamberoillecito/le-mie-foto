@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.7",
+    "@vite-pwa/astro": "^1.2.0",
     "nano-staged": "^1.0.2",
     "sharp": "^0.35.3",
     "simple-git-hooks": "^2.13.1",
