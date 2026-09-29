@@ -84,7 +84,7 @@ User-agent: OAI-SearchBot
 User-agent: PerplexityBot
 User-agent: PetalBot
 User-agent: TavilyBot
-Disallow: /
+Disallow: /le-mie-foto
 
 Sitemap: ${sitemapURL.href}
 `;
