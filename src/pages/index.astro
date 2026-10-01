@@ -1,11 +1,58 @@
 ---
 import { Image } from "astro:assets";
+import { readFile } from "node:fs/promises";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import "@fancyapps/ui/dist/fancybox/fancybox.css";
 
 const images = import.meta.glob<{ default: ImageMetadata }>(
   "../images/*.{jpg,jpeg,png,webp}",
 );
+
+// Format: yyyymmdd[(id)][_title_separated_by_underscores][-tags-separated-by-dashes]
+type ParsedFormat = {
+  date: string;
+  id?: string;
+  title?: string;
+  tags: string[];
+  extension: string;
+};
+
+function formatDate(value: string): string {
+  const year = value.slice(0, 4);
+  const month = value.slice(4, 6);
+  const day = value.slice(6, 8);
+
+  return `${day}-${month}-${year}`;
+}
+
+function parsePath(value: string): ParsedFormat {
+  // Supports both "/" and "\" path separators
+  const filename = value.split(/[\\/]/).pop();
+
+  if (!filename) {
+    throw new Error(`Invalid path: ${value}`);
+  }
+
+  const match = filename.match(
+    /^(?<date>\d{8})(?:\((?<id>[^)]+)\))?(?:_(?<title>[A-Za-z0-9_]+))?(?:-(?<tags>[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*))?\.(?<extension>[A-Za-z0-9]+)$/,
+  );
+
+  if (!match?.groups) {
+    throw new Error(`Invalid filename format: ${filename}`);
+  }
+
+  const { date, id, title, tags, extension } = match.groups;
+
+  return {
+    date: formatDate(date),
+    ...(id !== undefined && { id }),
+    ...(title !== undefined && {
+      title: title.replaceAll("_", " "),
+    }),
+    tags: tags ? tags.split("-") : [],
+    extension,
+  };
+}
 ---
 
 <BaseLayout
@@ -16,13 +63,18 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
     {
       Object.entries(images).reverse().map(async ([_path, image], index) => {
         const { default: imageData } = await image();
+        const exif = ExifReader.load(
+          await readFile(new URL(_path, import.meta.url)),
+        );
+        const imageInfo = parsePath(_path);
         return (
           <a
             style={`--width: ${imageData.width}; --height: ${imageData.height};`}
             href={imageData.src}
             target="_blank"
             data-fancybox="gallery"
-            // data-caption={_path}
+            data-caption={(imageInfo.title ?? "") + " " + imageInfo.date}
+            data-caption-value={(imageInfo.title ?? "") + " " + imageInfo.date}
           >
             <Image
               format="webp"
@@ -33,7 +85,6 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
             />
             
           </a>
-          
         );
       })
     }
@@ -42,6 +93,23 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
 
 <script>
   import { Fancybox } from "@fancyapps/ui/dist/fancybox/";
+import { undefined } from "astro:schema";
+
+  let showCaptions = true;
+  const galleryLinks = document.querySelectorAll<HTMLAnchorElement>(
+    "[data-fancybox='gallery']",
+  );
+
+  function updateCaptions() {
+    let captions = document.getElementsByClassName("f-caption");
+    for (let el of captions){
+      
+      // (el as HTMLElement).style.scale = showCaptions ? "0" : "1";
+      (el as HTMLElement).style.display = showCaptions ? "none" : "block";
+    }
+    showCaptions = showCaptions ? false : true;
+  }
+
 
   Fancybox.bind("[data-fancybox]", {
     theme: "light",
@@ -54,10 +122,18 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
     Carousel: {
       Arrows: false,
       Toolbar: {
+        items: {
+        facebook: {
+          tpl: '<button class="f-button"><svg><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></button>',
+          click: () => {
+            updateCaptions();
+          },
+        },
+      },
         display: {
           left: [],
           middle: [],
-          right: ["fullscreen"],
+          right: ["fullscreen", "facebook"],
         },
       },
       transition: "fade",
@@ -118,4 +194,5 @@ const images = import.meta.glob<{ default: ImageMetadata }>(
       flex-grow: 1000000000;
     }
   }
+
 </style>
