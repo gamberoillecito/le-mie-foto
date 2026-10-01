@@ -7,7 +7,6 @@
     "Verdana", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
     "Segoe UI Symbol";
 }
-
 body {
   background-color: var(--bg);
   font-family: var(--font);

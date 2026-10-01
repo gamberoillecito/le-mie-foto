@@ -63,9 +63,9 @@ function parsePath(value: string): ParsedFormat {
     {
       Object.entries(images).reverse().map(async ([_path, image], index) => {
         const { default: imageData } = await image();
-        const exif = ExifReader.load(
-          await readFile(new URL(_path, import.meta.url)),
-        );
+        // const exif = ExifReader.load(
+        //   await readFile(new URL(_path, import.meta.url)),
+        // );
         const imageInfo = parsePath(_path);
         return (
           <a
