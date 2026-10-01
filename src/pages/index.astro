@@ -93,23 +93,29 @@ function parsePath(value: string): ParsedFormat {
 <script>
   import { Fancybox } from "@fancyapps/ui/dist/fancybox/";
 
-  let showCaptions = true;
+  let showCaptions = false;
 
   function updateCaptions() {
-
-    // const caption = document.querySelector<HTMLElement>(
-    //   ".fancybox__caption, .f-caption",
-    // );
-    // if (caption) {
-    //   caption.style.display = showCaptions ? "block" : "none";
-    // }
-    let captions = document.getElementsByClassName("f-caption");
-    for (let el of captions){
-      
-      (el as HTMLElement).style.scale = showCaptions ? "0" : "1";
-      // (el as HTMLElement).style.display = showCaptions ? "none!" : "block";
-    }
     showCaptions = showCaptions ? false : true;
+    document.documentElement.classList.toggle(
+      "captions-hidden",
+      !showCaptions,
+    );
+
+    if (showCaptions) {
+      const activeSlide = Fancybox.getSlide();
+      const caption = activeSlide?.captionEl;
+      const slideCaption = activeSlide?.caption;
+
+      if (caption && slideCaption) {
+        caption.replaceChildren();
+        caption.append(
+          typeof slideCaption === "string"
+            ? document.createTextNode(slideCaption)
+            : slideCaption.cloneNode(true),
+        );
+      }
+    }
   }
 
 
@@ -122,9 +128,7 @@ function parsePath(value: string): ParsedFormat {
       "--f-toolbar-padding": "16px",
     },
     Carousel: {
-      formatCaption: (_carouselRef, slide) => {
-      return showCaptions ? slide.caption : "";
-    },
+      formatCaption: (_carouselRef, slide) => slide.caption ?? "",
       Arrows: false,
       Toolbar: {
         items: {
@@ -138,7 +142,7 @@ function parsePath(value: string): ParsedFormat {
         display: {
           left: [],
           middle: [],
-          right: ["fullscreen"],
+          right: ["fullscreen", "captions"],
         },
       },
       transition: "fade",
@@ -152,7 +156,12 @@ function parsePath(value: string): ParsedFormat {
   });
 </script>
 
-<style>
+<style is:global>
+  .captions-hidden .fancybox__caption,
+  .captions-hidden .f-caption {
+    display: none !important;
+  }
+
   .justified-gallery {
     --padding: max(2.5vw, 12px);
     --space: max(2.5vw, 12px);
